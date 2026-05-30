@@ -111,6 +111,101 @@ function handleSortChange() {
     renderDocumentsList(sorted);
 }
 
+function getCompiledDocQuery() {
+    const docQueryInput = document.getElementById('doc-query');
+    if (!docQueryInput) return '';
+    const rawVal = docQueryInput.value.trim();
+    if (!rawVal) return '';
+    
+    const hasFieldCodes = rawVal.includes('(') || 
+                         rawVal.includes(')') || 
+                         rawVal.includes(':') || 
+                         rawVal.includes('"') || 
+                         /\b(AND|OR|NOT)\b/i.test(rawVal);
+                         
+    if (!hasFieldCodes) {
+        return `TITLE("${rawVal}")`;
+    }
+    return rawVal;
+}
+
+function updateDocQueryPreview() {
+    const previewEl = document.getElementById('doc-query-preview');
+    if (!previewEl) return;
+    
+    const docQueryInput = document.getElementById('doc-query');
+    if (!docQueryInput) return;
+    
+    const rawVal = docQueryInput.value.trim();
+    if (!rawVal) {
+        previewEl.style.display = 'none';
+        return;
+    }
+    
+    const compiled = getCompiledDocQuery();
+    const isCompiledDifferent = (compiled !== rawVal);
+    
+    previewEl.style.display = 'block';
+    if (!isCompiledDifferent) {
+        previewEl.innerHTML = `<i class="fa-solid fa-code"></i> Standard Scopus Query: ${compiled}`;
+        previewEl.style.color = '#9ca3af';
+    } else {
+        previewEl.innerHTML = `<i class="fa-solid fa-magic"></i> Auto-wrapped for Title: <strong>${compiled}</strong>`;
+        previewEl.style.color = '#a78bfa';
+    }
+}
+
+function getCompiledAuthorQuery() {
+    const authorQueryInput = document.getElementById('author-query');
+    if (!authorQueryInput) return '';
+    const rawVal = authorQueryInput.value.trim();
+    if (!rawVal) return '';
+    
+    const hasFieldCodes = rawVal.includes('(') || 
+                         rawVal.includes(')') || 
+                         rawVal.includes(':') || 
+                         rawVal.includes('"') || 
+                         /\b(AND|OR|NOT)\b/i.test(rawVal);
+                         
+    if (!hasFieldCodes) {
+        const parts = rawVal.split(/\s+/).filter(p => p.length > 0);
+        if (parts.length === 1) {
+            return `AUTHLAST("${parts[0]}")`;
+        } else if (parts.length >= 2) {
+            const first = parts[0];
+            const last = parts[parts.length - 1];
+            return `AUTHFIRST("${first}") AND AUTHLAST("${last}")`;
+        }
+    }
+    return rawVal;
+}
+
+function updateAuthorQueryPreview() {
+    const previewEl = document.getElementById('author-query-preview');
+    if (!previewEl) return;
+    
+    const authorQueryInput = document.getElementById('author-query');
+    if (!authorQueryInput) return;
+    
+    const rawVal = authorQueryInput.value.trim();
+    if (!rawVal) {
+        previewEl.style.display = 'none';
+        return;
+    }
+    
+    const compiled = getCompiledAuthorQuery();
+    const isCompiledDifferent = (compiled !== rawVal);
+    
+    previewEl.style.display = 'block';
+    if (!isCompiledDifferent) {
+        previewEl.innerHTML = `<i class="fa-solid fa-code"></i> Standard Scopus Query: ${compiled}`;
+        previewEl.style.color = '#9ca3af';
+    } else {
+        previewEl.innerHTML = `<i class="fa-solid fa-magic"></i> Auto-wrapped for Name: <strong>${compiled}</strong>`;
+        previewEl.style.color = '#a78bfa';
+    }
+}
+
 // On load
 document.addEventListener('DOMContentLoaded', () => {
     // Dynamically set server URL in top bar
@@ -124,6 +219,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const hash = window.location.hash || '#dashboard';
     const tabName = hash.substring(1);
     switchTab(tabName);
+
+    // Dynamic Query Preview event listeners
+    const docQueryInput = document.getElementById('doc-query');
+    const authorQueryInput = document.getElementById('author-query');
+    
+    if (docQueryInput) {
+        docQueryInput.addEventListener('input', updateDocQueryPreview);
+        updateDocQueryPreview();
+    }
+    
+    if (authorQueryInput) {
+        authorQueryInput.addEventListener('input', updateAuthorQueryPreview);
+        updateAuthorQueryPreview();
+    }
 });
 
 // 1. Connection check and server ping
@@ -195,11 +304,13 @@ function setSearchType(type) {
 function useQuery(query) {
     document.getElementById('doc-query').value = query;
     setSearchType('documents');
+    updateDocQueryPreview();
 }
 
 function useAuthorQuery(query) {
     document.getElementById('author-query').value = query;
     setSearchType('authors');
+    updateAuthorQueryPreview();
 }
 
 // 4. Local OpenAPI Fetching & Parsing
@@ -433,7 +544,8 @@ async function runScopusSearch() {
         let response, data;
         
         if (activeSearchType === 'documents') {
-            const query = encodeURIComponent(document.getElementById('doc-query').value);
+            const compiledQuery = getCompiledDocQuery();
+            const query = encodeURIComponent(compiledQuery);
             response = await fetch(`/api/scopus/search?query=${query}&count=${count}&start=${startOffset}`);
             if (!response.ok) throw new Error("Scopus response returned error code.");
             
@@ -465,7 +577,8 @@ async function runScopusSearch() {
             }
         } else {
             // Author search
-            const query = encodeURIComponent(document.getElementById('author-query').value);
+            const compiledQuery = getCompiledAuthorQuery();
+            const query = encodeURIComponent(compiledQuery);
             response = await fetch(`/api/scopus/author-search?query=${query}&count=${count}&start=${startOffset}`);
             if (!response.ok) throw new Error("Scopus response returned error code.");
             

@@ -103,8 +103,9 @@
                                 <label for="doc-query">Scopus Search Query</label>
                                 <div class="search-input-wrapper">
                                     <i class="fa-solid fa-terminal input-icon"></i>
-                                    <input type="text" id="doc-query" placeholder="e.g., TITLE-ABS-KEY(&quot;artificial intelligence&quot;)" value="TITLE-ABS-KEY(&quot;machine learning&quot;)">
+                                    <input type="text" id="doc-query" placeholder="e.g., machine learning" value="machine learning">
                                 </div>
+                                <div class="compiled-query-preview" id="doc-query-preview" style="font-size: 0.75rem; color: #a78bfa; margin-top: 6px; font-family: 'Fira Code', monospace; display: none;"></div>
                                 <div class="query-suggestions">
                                     <span class="suggestion-tag" onclick="useQuery('TITLE-ABS-KEY(&quot;machine learning&quot;)')">Machine Learning</span>
                                     <span class="suggestion-tag" onclick="useQuery('AUTHOR-NAME(hawking, s)')">Stephen Hawking</span>
@@ -117,8 +118,9 @@
                                 <label for="author-query">Author Name Query</label>
                                 <div class="search-input-wrapper">
                                     <i class="fa-solid fa-user input-icon"></i>
-                                    <input type="text" id="author-query" placeholder="e.g., AUTHFIRST(Stephen) AUTHLAST(Hawking)">
+                                    <input type="text" id="author-query" placeholder="e.g., Stephen Hawking">
                                 </div>
+                                <div class="compiled-query-preview" id="author-query-preview" style="font-size: 0.75rem; color: #a78bfa; margin-top: 6px; font-family: 'Fira Code', monospace; display: none;"></div>
                                 <div class="query-suggestions">
                                     <span class="suggestion-tag" onclick="useAuthorQuery('AUTHFIRST(Stephen) AUTHLAST(Hawking)')">Stephen Hawking</span>
                                     <span class="suggestion-tag" onclick="useAuthorQuery('AUTHLAST(Einstein)')">Einstein</span>
