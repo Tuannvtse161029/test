@@ -111,22 +111,34 @@ function handleSortChange() {
     renderDocumentsList(sorted);
 }
 
+function cleanRawSearchQuery(val) {
+    if (!val) return '';
+    return val
+        .replace(/Open\s*Access/gi, '')
+        .replace(/Source\s*title/gi, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
 function getCompiledDocQuery() {
     const docQueryInput = document.getElementById('doc-query');
     if (!docQueryInput) return '';
     const rawVal = docQueryInput.value.trim();
     if (!rawVal) return '';
     
-    const hasFieldCodes = rawVal.includes('(') || 
-                         rawVal.includes(')') || 
-                         rawVal.includes(':') || 
-                         rawVal.includes('"') || 
-                         /\b(AND|OR|NOT)\b/i.test(rawVal);
+    const cleanedVal = cleanRawSearchQuery(rawVal);
+    if (!cleanedVal) return '';
+    
+    const hasFieldCodes = cleanedVal.includes('(') || 
+                         cleanedVal.includes(')') || 
+                         cleanedVal.includes(':') || 
+                         cleanedVal.includes('"') || 
+                         /\b(AND|OR|NOT)\b/i.test(cleanedVal);
                          
     if (!hasFieldCodes) {
-        return `TITLE("${rawVal}")`;
+        return `TITLE("${cleanedVal}")`;
     }
-    return rawVal;
+    return cleanedVal;
 }
 
 function updateDocQueryPreview() {
@@ -161,14 +173,17 @@ function getCompiledAuthorQuery() {
     const rawVal = authorQueryInput.value.trim();
     if (!rawVal) return '';
     
-    const hasFieldCodes = rawVal.includes('(') || 
-                         rawVal.includes(')') || 
-                         rawVal.includes(':') || 
-                         rawVal.includes('"') || 
-                         /\b(AND|OR|NOT)\b/i.test(rawVal);
+    const cleanedVal = cleanRawSearchQuery(rawVal);
+    if (!cleanedVal) return '';
+    
+    const hasFieldCodes = cleanedVal.includes('(') || 
+                         cleanedVal.includes(')') || 
+                         cleanedVal.includes(':') || 
+                         cleanedVal.includes('"') || 
+                         /\b(AND|OR|NOT)\b/i.test(cleanedVal);
                          
     if (!hasFieldCodes) {
-        const parts = rawVal.split(/\s+/).filter(p => p.length > 0);
+        const parts = cleanedVal.split(/\s+/).filter(p => p.length > 0);
         if (parts.length === 1) {
             return `AUTHLAST("${parts[0]}")`;
         } else if (parts.length >= 2) {
@@ -177,7 +192,7 @@ function getCompiledAuthorQuery() {
             return `AUTHFIRST("${first}") AND AUTHLAST("${last}")`;
         }
     }
-    return rawVal;
+    return cleanedVal;
 }
 
 function updateAuthorQueryPreview() {
@@ -554,12 +569,16 @@ async function runScopusSearch() {
             const entries = results.entry || [];
             const totalResults = results['opensearch:totalResults'] || '0';
             
-            countBadge.textContent = `Found ${totalResults} articles`;
+            const totalResultsVal = parseInt(totalResults) || 0;
+            const hasDocErrorEntry = entries.length === 1 && (entries[0].error || (entries[0]['@_fa'] === 'true' && !entries[0]['dc:title']));
             
-            if (entries.length === 0) {
+            countBadge.textContent = `Found ${totalResultsVal} articles`;
+            
+            if (totalResultsVal === 0 || entries.length === 0 || hasDocErrorEntry) {
                 list.classList.add('hidden');
                 empty.classList.remove('hidden');
                 empty.querySelector('p').textContent = "No document matches found for this search filter query.";
+                countBadge.textContent = "Found 0 articles";
             } else {
                 // Pre-resolve journal metrics for each entry
                 entries.forEach(entry => {
@@ -587,12 +606,16 @@ async function runScopusSearch() {
             const entries = results.entry || [];
             const totalResults = results['opensearch:totalResults'] || '0';
             
-            countBadge.textContent = `Found ${totalResults} author profiles`;
+            const totalResultsVal = parseInt(totalResults) || 0;
+            const hasAuthorErrorEntry = entries.length === 1 && (entries[0].error || (entries[0]['@_fa'] === 'true' && !entries[0]['preferred-name']));
             
-            if (entries.length === 0) {
+            countBadge.textContent = `Found ${totalResultsVal} author profiles`;
+            
+            if (totalResultsVal === 0 || entries.length === 0 || hasAuthorErrorEntry) {
                 list.classList.add('hidden');
                 empty.classList.remove('hidden');
                 empty.querySelector('p').textContent = "No academic profiles match this search query.";
+                countBadge.textContent = "Found 0 author profiles";
             } else {
                 renderAuthorsList(entries);
             }
