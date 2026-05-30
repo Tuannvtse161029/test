@@ -24,12 +24,18 @@ export default async function handler(req, res) {
   queryParams.append("view", view);
   url += `?${queryParams.toString()}`;
   
+  const instToken = req.headers['x-els-insttoken'];
+  const headers = {
+    "X-ELS-APIKey": apiKey,
+    "Accept": "application/json"
+  };
+  if (instToken) {
+    headers["X-ELS-Insttoken"] = instToken;
+  }
+  
   try {
     const scopusRes = await fetch(url, {
-      headers: {
-        "X-ELS-APIKey": apiKey,
-        "Accept": "application/json"
-      }
+      headers: headers
     });
     
     if (!scopusRes.ok) {

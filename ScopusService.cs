@@ -81,7 +81,7 @@ namespace ScopusSwaggerTester
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> GetSerialTitleAsync(string? title, string? issn, string? view = "CITESCORE")
+        public async Task<string> GetSerialTitleAsync(string? title, string? issn, string? view = "CITESCORE", string? instToken = null)
         {
             var builder = new UriBuilder($"{BaseUrl}/serial/title");
             var queryParams = HttpUtility.ParseQueryString(string.Empty);
@@ -98,7 +98,13 @@ namespace ScopusSwaggerTester
             queryParams["view"] = view ?? "CITESCORE";
             builder.Query = queryParams.ToString();
 
-            var response = await _httpClient.GetAsync(builder.ToString());
+            var request = new HttpRequestMessage(HttpMethod.Get, builder.ToString());
+            if (!string.IsNullOrEmpty(instToken))
+            {
+                request.Headers.Add("X-ELS-Insttoken", instToken);
+            }
+            
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }

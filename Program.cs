@@ -117,11 +117,12 @@ scopusGroup.MapGet("/abstract-by-doi", async (string doi, string? view, ScopusSe
 .WithName("GetAbstractByDoi")
 .WithDescription("Retrieve abstract metadata and metrics for an article using its digital object identifier (DOI).");
 
-scopusGroup.MapGet("/serial-title", async (string? title, string? issn, string? view, ScopusService scopusService) =>
+scopusGroup.MapGet("/serial-title", async (string? title, string? issn, string? view, HttpContext httpContext, ScopusService scopusService) =>
 {
     try
     {
-        var jsonResult = await scopusService.GetSerialTitleAsync(title, issn, view ?? "CITESCORE");
+        string? instToken = httpContext.Request.Headers["X-ELS-Insttoken"];
+        var jsonResult = await scopusService.GetSerialTitleAsync(title, issn, view ?? "CITESCORE", instToken);
         return Results.Content(jsonResult, "application/json");
     }
     catch (System.Exception ex)
