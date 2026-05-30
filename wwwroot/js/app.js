@@ -44,7 +44,7 @@ function resolveJournalMetrics(journal, issn, citations) {
         "NANO-MICRO LETTERS": { citeScore: 30.2, year: "2024", sjr: 3.56, percentile: 99, citationsCount: 5420, documentsCount: 180, percentCited: 92 },
         "JOURNAL OF MATERIALS SCIENCE AND TECHNOLOGY": { citeScore: 19.6, year: "2024", sjr: 2.86, percentile: 93, citationsCount: 14500, documentsCount: 740, percentCited: 90 },
         "JOURNAL OF MATERIALS SCIENCE & TECHNOLOGY": { citeScore: 19.6, year: "2024", sjr: 2.86, percentile: 93, citationsCount: 14500, documentsCount: 740, percentCited: 90 },
-        "CA-A CANCER JOURNAL FOR CLINICIANS": { citeScore: 1154.2, year: "2024", sjr: 75.5, percentile: 99, citationsCount: 138500, documentsCount: 120, percentCited: 98 },
+        "CA-A CANCER JOURNAL FOR CLINICIANS": { citeScore: 1154.2, year: "2024", sjr: 75.5, percentile: 99, citationsCount: 121190, documentsCount: 105, percentCited: 94 },
         "NATURE REVIEWS DRUG DISCOVERY": { citeScore: 181.8, year: "2024", sjr: 28.5, percentile: 99, citationsCount: 54500, documentsCount: 300, percentCited: 96 },
         "NATURE REVIEWS MOLECULAR CELL BIOLOGY": { citeScore: 150.9, year: "2024", sjr: 24.5, percentile: 99, citationsCount: 48200, documentsCount: 320, percentCited: 96 },
         "NATURE": { citeScore: 72.4, year: "2024", sjr: 15.8, percentile: 99, citationsCount: 652000, documentsCount: 9000, percentCited: 92 },
