@@ -41,6 +41,7 @@ function resolveJournalMetrics(journal, issn, citations) {
         "COMPUTER STANDARDS & INTERFACES": { citeScore: 12.3, year: "2024", sjr: 1.12, percentile: 91, citationsCount: 5410, documentsCount: 439, percentCited: 84 },
         "FUEL": { citeScore: 14.2, year: "2024", sjr: 1.61, percentile: 94, citationsCount: 42100, documentsCount: 2964, percentCited: 88 },
         "WIND ENERGY": { citeScore: 8.9, year: "2024", sjr: 1.15, percentile: 72, citationsCount: 3952, documentsCount: 444, percentCited: 78 },
+        "NANO-MICRO LETTERS": { citeScore: 30.2, year: "2024", sjr: 3.56, percentile: 99, citationsCount: 5420, documentsCount: 180, percentCited: 92 },
         "JOURNAL OF MATERIALS SCIENCE AND TECHNOLOGY": { citeScore: 19.6, year: "2024", sjr: 2.86, percentile: 93, citationsCount: 14500, documentsCount: 740, percentCited: 90 },
         "JOURNAL OF MATERIALS SCIENCE & TECHNOLOGY": { citeScore: 19.6, year: "2024", sjr: 2.86, percentile: 93, citationsCount: 14500, documentsCount: 740, percentCited: 90 },
         "CA-A CANCER JOURNAL FOR CLINICIANS": { citeScore: 1154.2, year: "2024", sjr: 75.5, percentile: 99, citationsCount: 138500, documentsCount: 120, percentCited: 98 },
@@ -775,13 +776,13 @@ async function runScopusSearch() {
             const mockEntries = [
                 {
                     "dc:title": "High Durability Sliding TENG with Enhanced Output Achieved by Capturing Multiple Region Charges for Harvesting Wind Energy",
-                    "dc:creator": "Trieu Tuan N. V.",
-                    "prism:publicationName": "Wind Energy",
+                    "dc:creator": "He W.",
+                    "prism:publicationName": "Nano-Micro Letters",
                     "prism:coverDate": "2025-03-12",
                     "citedby-count": "72",
-                    "prism:doi": "10.1002/we.2638",
+                    "prism:doi": "10.1007/s40820-025-02043-1",
                     "dc:identifier": "SCOPUS_ID:85112345678",
-                    "prism:issn": "10954244"
+                    "prism:issn": "21505551"
                 },
                 {
                     "dc:title": "Deep Reinforcement Learning Control for Multi-Megawatt Wind Turbines",
