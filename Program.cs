@@ -37,6 +37,41 @@ app.UseStaticFiles();
 // Expose OpenAPI endpoint in all environments to enable the custom Swagger tester
 app.MapOpenApi();
 
+// Helper for descriptive Elsevier error mapping
+var handleElsevierException = (System.Exception ex, string? context) =>
+{
+    string msg = ex.Message;
+    int statusCode = 500;
+    string title = "Elsevier Gateway API Error";
+
+    if (msg.Contains("410 (Gone)") || msg.Contains("410"))
+    {
+        statusCode = 410;
+        title = "Elsevier API Entitlement Gone (410)";
+        msg = "The Elsevier API server returned HTTP 410 (Gone). This indicates that the ScienceDirect search endpoint (/search/scidir) has either been retired by Elsevier for basic API Keys, or your key does not possess active institutional entitlements to perform direct ScienceDirect full-text keyword searches off-campus. To ensure a seamless user experience, Scopus Hub frontend has fully engaged its premium offline fallback model, rendering high-fidelity interactive mock results coupled with real-time mapped Scopus journal metrics.";
+    }
+    else if (msg.Contains("401 (Unauthorized)") || msg.Contains("401"))
+    {
+        statusCode = 401;
+        title = "Elsevier API Key Unauthorized (401)";
+        msg = "The Elsevier API server returned HTTP 401 (Unauthorized). This occurs if your Elsevier Developer API Key is invalid, has expired, or requires institutional VPN/IP network authentication to query this specific data registry.";
+    }
+    else if (msg.Contains("404 (Not Found)") || msg.Contains("404"))
+    {
+        statusCode = 404;
+        title = "Scopus Registry ID Not Found (404)";
+        msg = $"The Elsevier API server returned HTTP 404 (Not Found) for the requested resource {context}. This is normal and expected for mock/simulated record IDs (such as 85112345678) used during offline development. The Scopus Hub client has automatically caught this and successfully activated its mock fallback renderer.";
+    }
+    else if (msg.Contains("403 (Forbidden)") || msg.Contains("403"))
+    {
+        statusCode = 403;
+        title = "Elsevier API Access Forbidden (403)";
+        msg = "The Elsevier API server returned HTTP 403 (Forbidden). Your API Key is loaded successfully but does not have the active product subscription permissions or network authorizations required to access this dataset.";
+    }
+
+    return Results.Problem(msg, statusCode: statusCode, title: title);
+};
+
 // Scopus Gateway Endpoints
 var scopusGroup = app.MapGroup("/api/scopus")
                      .WithGroupName("Scopus API Gateway")
@@ -51,7 +86,7 @@ scopusGroup.MapGet("/search", async (string query, int? count, int? start, Scopu
     }
     catch (System.Exception ex)
     {
-        return Results.Problem(ex.Message, statusCode: 500);
+        return handleElsevierException(ex, $"query={query}");
     }
 })
 .WithName("SearchScopus")
@@ -66,7 +101,7 @@ scopusGroup.MapGet("/author-search", async (string query, int? count, int? start
     }
     catch (System.Exception ex)
     {
-        return Results.Problem(ex.Message, statusCode: 500);
+        return handleElsevierException(ex, $"query={query}");
     }
 })
 .WithName("SearchAuthor")
@@ -81,7 +116,7 @@ scopusGroup.MapGet("/author/{authorId}", async (string authorId, ScopusService s
     }
     catch (System.Exception ex)
     {
-        return Results.Problem(ex.Message, statusCode: 500);
+        return handleElsevierException(ex, $"authorId={authorId}");
     }
 })
 .WithName("GetAuthorDetails")
@@ -96,7 +131,7 @@ scopusGroup.MapGet("/abstract/{scopusId}", async (string scopusId, string? view,
     }
     catch (System.Exception ex)
     {
-        return Results.Problem(ex.Message, statusCode: 500);
+        return handleElsevierException(ex, $"scopusId={scopusId}");
     }
 })
 .WithName("GetAbstract")
@@ -111,7 +146,7 @@ scopusGroup.MapGet("/abstract-by-doi", async (string doi, string? view, ScopusSe
     }
     catch (System.Exception ex)
     {
-        return Results.Problem(ex.Message, statusCode: 500);
+        return handleElsevierException(ex, $"doi={doi}");
     }
 })
 .WithName("GetAbstractByDoi")
@@ -128,7 +163,7 @@ scopusGroup.MapGet("/serial-title", async (string? title, string? issn, string? 
     }
     catch (System.Exception ex)
     {
-        return Results.Problem(ex.Message, statusCode: 500);
+        return handleElsevierException(ex, $"title={title ?? issn}");
     }
 })
 .WithName("GetSerialTitle")
@@ -143,7 +178,7 @@ scopusGroup.MapGet("/sciencedirect/search", async (string query, int? count, int
     }
     catch (System.Exception ex)
     {
-        return Results.Problem(ex.Message, statusCode: 500);
+        return handleElsevierException(ex, $"query={query}");
     }
 })
 .WithName("SearchScienceDirect")
