@@ -610,12 +610,13 @@ function renderDocumentsList(entries) {
         const metrics = entry._resolvedMetrics;
         const qClass = metrics ? metrics.quartile.toLowerCase() : 'q4';
         const quartileText = metrics ? metrics.quartile : 'Q4';
+        const pctText = metrics ? ` (${metrics.percentile}%)` : '';
 
         item.innerHTML = `
             <div class="result-item-header">
                 <h4>${title}</h4>
                 <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-                    <span class="quartile-badge ${qClass}"><i class="fa-solid fa-award"></i> ${quartileText}</span>
+                    <span class="quartile-badge ${qClass}"><i class="fa-solid fa-award"></i> ${quartileText}${pctText}</span>
                     <span class="citation-pill"><i class="fa-solid fa-quote-right"></i> Cited by ${citations}</span>
                 </div>
             </div>
