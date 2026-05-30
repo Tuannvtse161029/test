@@ -85,7 +85,13 @@ function handleSortChange() {
         sorted.sort((a, b) => {
             const citA = parseInt(a['citedby-count'] || '0');
             const citB = parseInt(b['citedby-count'] || '0');
-            return citB - citA;
+            if (citA !== citB) {
+                return citB - citA; // Primary sort by citations count (descending)
+            }
+            // Secondary sort by Quartile (ascending Q1 -> Q2 -> Q3 -> Q4)
+            const qA = a._resolvedMetrics?.quartile || 'Q4';
+            const qB = b._resolvedMetrics?.quartile || 'Q4';
+            return qA.localeCompare(qB);
         });
     } else if (sortVal === 'quartile') {
         sorted.sort((a, b) => {
