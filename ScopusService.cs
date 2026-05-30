@@ -9,7 +9,7 @@ namespace ScopusSwaggerTester
     public class ScopusService
     {
         private readonly HttpClient _httpClient;
-        private const string ApiKey = "d529415ff014b69d7aa600ed720df15e";
+        private const string ApiKey = "e0d47adf81d855fff163e582a5a4659b";
         private const string BaseUrl = "https://api.elsevier.com/content";
 
         public ScopusService(HttpClient httpClient)
