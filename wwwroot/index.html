@@ -91,7 +91,10 @@
                         <div class="search-options">
                             <div class="search-type-selector">
                                 <button class="btn-toggle active" id="btn-type-documents" onclick="setSearchType('documents')">
-                                    <i class="fa-solid fa-file-invoice"></i> Documents
+                                    <i class="fa-solid fa-file-invoice"></i> Scopus Articles
+                                </button>
+                                <button class="btn-toggle" id="btn-type-sciencedirect" onclick="setSearchType('sciencedirect')">
+                                    <i class="fa-solid fa-graduation-cap"></i> ScienceDirect + Scopus
                                 </button>
                                 <button class="btn-toggle" id="btn-type-authors" onclick="setSearchType('authors')">
                                     <i class="fa-solid fa-user-graduate"></i> Authors
@@ -512,6 +515,37 @@
                 </div>
                 <div class="loading-spinner-small hidden" id="sheet-abstract-spinner">
                     <i class="fa-solid fa-circle-notch fa-spin"></i> Fetching abstract...
+                </div>
+            </div>
+
+            <!-- Scopus Journal Metrics Mapping Section -->
+            <div class="sheet-section" id="sheet-journal-metrics-section" style="border: 1px solid rgba(99,102,241,0.15); background: rgba(99,102,241,0.03); border-radius: 12px; padding: 16px;">
+                <h4 style="color: #a78bfa; display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><i class="fa-solid fa-chart-line"></i> Mapped Scopus Journal Indicators</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85rem;">
+                    <div style="grid-column: span 2; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; margin-bottom: 4px;">
+                        <span style="color: var(--text-secondary); display: block; font-size: 0.75rem;">Source Title (Journal)</span>
+                        <strong id="sheet-metric-source-title" style="color: var(--text-primary); font-size: 0.9rem;">N/A</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-secondary); display: block; font-size: 0.75rem;">CiteScore</span>
+                        <strong id="sheet-metric-citescore" class="text-success" style="font-size: 1rem;">--</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-secondary); display: block; font-size: 0.75rem;">Highest Percentile</span>
+                        <strong id="sheet-metric-percentile" style="color: #a78bfa; font-size: 1rem;">--</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-secondary); display: block; font-size: 0.75rem;">Citations (2021-24)</span>
+                        <strong id="sheet-metric-citations" style="color: var(--text-primary);">--</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-secondary); display: block; font-size: 0.75rem;">Documents (2021-24)</span>
+                        <strong id="sheet-metric-documents" style="color: var(--text-primary);">--</strong>
+                    </div>
+                    <div style="grid-column: span 2;">
+                        <span style="color: var(--text-secondary); display: block; font-size: 0.75rem;">% Cited</span>
+                        <strong id="sheet-metric-percent-cited" style="color: var(--text-primary);">--</strong>
+                    </div>
                 </div>
             </div>
 

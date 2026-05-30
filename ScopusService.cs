@@ -81,30 +81,29 @@ namespace ScopusSwaggerTester
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> GetSerialTitleAsync(string? title, string? issn, string? view = "CITESCORE", string? instToken = null)
+        public async Task<string> GetSerialTitleByTitleAsync(string title, string? view = "CITESCORE")
         {
             var builder = new UriBuilder($"{BaseUrl}/serial/title");
             var queryParams = HttpUtility.ParseQueryString(string.Empty);
-            
-            if (!string.IsNullOrEmpty(issn))
-            {
-                queryParams["issn"] = issn;
-            }
-            else if (!string.IsNullOrEmpty(title))
-            {
-                queryParams["title"] = title;
-            }
-            
+            queryParams["title"] = title;
             queryParams["view"] = view ?? "CITESCORE";
             builder.Query = queryParams.ToString();
+            var response = await _httpClient.GetAsync(builder.ToString());
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
 
-            var request = new HttpRequestMessage(HttpMethod.Get, builder.ToString());
-            if (!string.IsNullOrEmpty(instToken))
-            {
-                request.Headers.Add("X-ELS-Insttoken", instToken);
-            }
-            
-            var response = await _httpClient.SendAsync(request);
+        public async Task<string> SearchScienceDirectAsync(string query, int count = 25, int start = 0)
+        {
+            var builder = new UriBuilder($"{BaseUrl}/search/scidir");
+            var queryParams = HttpUtility.ParseQueryString(string.Empty);
+            queryParams["query"] = query;
+            queryParams["count"] = count.ToString();
+            queryParams["start"] = start.ToString();
+            queryParams["field"] = "title,authors,publicationName,coverDate,doi,description,issn,citedByCount,openaccess";
+            builder.Query = queryParams.ToString();
+
+            var response = await _httpClient.GetAsync(builder.ToString());
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }

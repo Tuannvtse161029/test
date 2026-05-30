@@ -121,8 +121,9 @@ scopusGroup.MapGet("/serial-title", async (string? title, string? issn, string? 
 {
     try
     {
-        string? instToken = httpContext.Request.Headers["X-ELS-Insttoken"];
-        var jsonResult = await scopusService.GetSerialTitleAsync(title, issn, view ?? "CITESCORE", instToken);
+        string searchTitle = title ?? "";
+        if (!string.IsNullOrEmpty(issn)) searchTitle = issn;
+        var jsonResult = await scopusService.GetSerialTitleByTitleAsync(searchTitle, view ?? "CITESCORE");
         return Results.Content(jsonResult, "application/json");
     }
     catch (System.Exception ex)
@@ -132,6 +133,21 @@ scopusGroup.MapGet("/serial-title", async (string? title, string? issn, string? 
 })
 .WithName("GetSerialTitle")
 .WithDescription("Retrieve journal/serial source metadata including CiteScore, SJR, and SNIP metrics.");
+
+scopusGroup.MapGet("/sciencedirect/search", async (string query, int? count, int? start, ScopusService scopusService) =>
+{
+    try
+    {
+        var jsonResult = await scopusService.SearchScienceDirectAsync(query, count ?? 25, start ?? 0);
+        return Results.Content(jsonResult, "application/json");
+    }
+    catch (System.Exception ex)
+    {
+        return Results.Problem(ex.Message, statusCode: 500);
+    }
+})
+.WithName("SearchScienceDirect")
+.WithDescription("Search the ScienceDirect full-text article index using query syntax.");
 
 // Fallback to index.html for client side routing
 app.MapFallbackToFile("index.html");
