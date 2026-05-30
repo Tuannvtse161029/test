@@ -1307,3 +1307,82 @@ body {
 .hidden {
     display: none !important;
 }
+
+/* Results Controls & Sort Dropdown */
+.results-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sort-dropdown {
+    background-color: rgba(9, 9, 13, 0.7);
+    border: 1px solid var(--border-card);
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    outline: none;
+}
+
+.sort-dropdown:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 8px var(--primary-glow);
+}
+
+.sort-dropdown option {
+    background-color: #0e0e14;
+    color: var(--text-primary);
+}
+
+/* Quartile Badges */
+.quartile-badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.725rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.quartile-badge.q1 {
+    background-color: rgba(16, 185, 129, 0.12);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
+}
+
+.quartile-badge.q2 {
+    background-color: rgba(14, 165, 233, 0.12);
+    color: #38bdf8;
+    border: 1px solid rgba(14, 165, 233, 0.25);
+    box-shadow: 0 0 10px rgba(14, 165, 233, 0.15);
+}
+
+.quartile-badge.q3 {
+    background-color: rgba(245, 158, 11, 0.12);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.15);
+}
+
+.quartile-badge.q4 {
+    background-color: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.15);
+}
+
+/* Metric values glowing text colors */
+.metric-val.q1-text { color: #34d399 !important; text-shadow: 0 0 10px rgba(16, 185, 129, 0.35); }
+.metric-val.q2-text { color: #38bdf8 !important; text-shadow: 0 0 10px rgba(14, 165, 233, 0.35); }
+.metric-val.q3-text { color: #fbbf24 !important; text-shadow: 0 0 10px rgba(245, 158, 11, 0.35); }
+.metric-val.q4-text { color: #f87171 !important; text-shadow: 0 0 10px rgba(239, 68, 68, 0.35); }
+
+

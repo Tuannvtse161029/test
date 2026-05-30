@@ -172,7 +172,15 @@
                     <div class="card results-card" id="results-panel">
                         <div class="card-header flex-header">
                             <h3><i class="fa-solid fa-list-ol"></i> Query Results</h3>
-                            <span class="badge" id="results-count">No query executed</span>
+                            <div class="results-controls">
+                                <label for="sort-select" style="font-size:0.75rem; color:var(--text-muted);"><i class="fa-solid fa-sort"></i> Sort By:</label>
+                                <select id="sort-select" class="sort-dropdown" onchange="handleSortChange()">
+                                    <option value="default">Default (Scopus Rank)</option>
+                                    <option value="citations">Citations (High ➔ Low)</option>
+                                    <option value="quartile">Quartile (Q1 ➔ Q4)</option>
+                                </select>
+                                <span class="badge" id="results-count">No query executed</span>
+                            </div>
                         </div>
                         
                         <div class="loading-spinner hidden" id="results-spinner">
@@ -486,6 +494,10 @@
                     <span class="metric-lbl">CiteScore</span>
                 </div>
                 <div class="sheet-metric">
+                    <span class="metric-val" id="sheet-quartile">--</span>
+                    <span class="metric-lbl">Quartile</span>
+                </div>
+                <div class="sheet-metric">
                     <span class="metric-val" id="sheet-date">2026-05</span>
                     <span class="metric-lbl">Publication Date</span>
                 </div>
@@ -508,6 +520,7 @@
                     <li><strong>Scopus ID:</strong> <span id="sheet-scopus-id">N/A</span></li>
                     <li><strong>Journal CiteScore:</strong> <span id="sheet-citescore-full">N/A</span></li>
                     <li><strong>SCImago Journal Rank (SJR):</strong> <span id="sheet-sjr">N/A</span></li>
+                    <li><strong>Journal Percentile:</strong> <span id="sheet-percentile-full">N/A</span></li>
                     <li><strong>Affiliation:</strong> <span id="sheet-affiliation">N/A</span></li>
                     <li><strong>Subject Areas:</strong> <span id="sheet-subjects">N/A</span></li>
                 </ul>
