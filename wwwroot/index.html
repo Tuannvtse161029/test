@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scopus Hub & OpenAPI Swagger Tester</title>
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for High-End Visuals -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <i class="fa-solid fa-circle-nodes"></i>
+                </div>
+                <div class="brand-text">
+                    <h2>ScopusHub</h2>
+                    <span>API Gateway & Tester</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#dashboard" class="menu-item active" onclick="switchTab('dashboard')">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Dashboard & Analytics</span>
+                </a>
+                <a href="#swagger-tester" class="menu-item" onclick="switchTab('swagger-tester')">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Gateway OpenAPI Tester</span>
+                </a>
+                <a href="#external-tester" class="menu-item" onclick="switchTab('external-tester')">
+                    <i class="fa-solid fa-network-wired"></i>
+                    <span>External Swagger Tester</span>
+                </a>
+                <a href="#query-guide" class="menu-item" onclick="switchTab('query-guide')">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <span>Scopus Query Guide</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="connection-status connected" id="connection-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Server Online</span>
+                </div>
+                <div class="project-info">
+                    <p>ASP.NET Core 9.0 Web API</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Panel -->
+        <main class="main-content">
+            <!-- Top Navigation Bar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h1 id="page-title">Dashboard & Analytics</h1>
+                </div>
+                <div class="topbar-right">
+                    <div class="server-badge">
+                        <i class="fa-solid fa-server"></i>
+                        <span id="server-url">http://localhost:5088</span>
+                    </div>
+                    <div class="api-key-badge">
+                        <i class="fa-solid fa-key"></i>
+                        <span>Scopus Key Loaded</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard / Scopus Search Tab -->
+            <section id="tab-dashboard" class="tab-content active">
+                <div class="dashboard-grid">
+                    <!-- Left: Search Controls -->
+                    <div class="card search-card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-magnifying-glass"></i> Explore Elsevier Scopus Database</h3>
+                            <p>Query over 80 million high-quality peer-reviewed publications and author profile metrics.</p>
+                        </div>
+                        
+                        <div class="search-options">
+                            <div class="search-type-selector">
+                                <button class="btn-toggle active" id="btn-type-documents" onclick="setSearchType('documents')">
+                                    <i class="fa-solid fa-file-invoice"></i> Documents
+                                </button>
+                                <button class="btn-toggle" id="btn-type-authors" onclick="setSearchType('authors')">
+                                    <i class="fa-solid fa-user-graduate"></i> Authors
+                                </button>
+                            </div>
+
+                            <!-- Document Search Form -->
+                            <div id="search-doc-group" class="search-form-group">
+                                <label for="doc-query">Scopus Search Query</label>
+                                <div class="search-input-wrapper">
+                                    <i class="fa-solid fa-terminal input-icon"></i>
+                                    <input type="text" id="doc-query" placeholder="e.g., TITLE-ABS-KEY(&quot;artificial intelligence&quot;)" value="TITLE-ABS-KEY(&quot;machine learning&quot;)">
+                                </div>
+                                <div class="query-suggestions">
+                                    <span class="suggestion-tag" onclick="useQuery('TITLE-ABS-KEY(&quot;machine learning&quot;)')">Machine Learning</span>
+                                    <span class="suggestion-tag" onclick="useQuery('AUTHOR-NAME(hawking, s)')">Stephen Hawking</span>
+                                    <span class="suggestion-tag" onclick="useQuery('AFFIL(Massachusetts Institute of Technology) AND &quot;quantum computing&quot;')">MIT Quantum</span>
+                                </div>
+                            </div>
+
+                            <!-- Author Search Form (Hidden by default) -->
+                            <div id="search-author-group" class="search-form-group hidden">
+                                <label for="author-query">Author Name Query</label>
+                                <div class="search-input-wrapper">
+                                    <i class="fa-solid fa-user input-icon"></i>
+                                    <input type="text" id="author-query" placeholder="e.g., AUTHFIRST(Stephen) AUTHLAST(Hawking)">
+                                </div>
+                                <div class="query-suggestions">
+                                    <span class="suggestion-tag" onclick="useAuthorQuery('AUTHFIRST(Stephen) AUTHLAST(Hawking)')">Stephen Hawking</span>
+                                    <span class="suggestion-tag" onclick="useAuthorQuery('AUTHLAST(Einstein)')">Einstein</span>
+                                    <span class="suggestion-tag" onclick="useAuthorQuery('AUTHFIRST(Andrew) AUTHLAST(Ng)')">Andrew Ng</span>
+                                </div>
+                            </div>
+
+                            <div class="search-params-row">
+                                <div class="param-input">
+                                    <label for="search-count">Result Count</label>
+                                    <input type="number" id="search-count" value="10" min="1" max="100">
+                                </div>
+                                <div class="param-input">
+                                    <label for="search-start">Start Offset</label>
+                                    <input type="number" id="search-start" value="0" min="0">
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary btn-search" id="btn-execute-search" onclick="runScopusSearch()">
+                                <i class="fa-solid fa-paper-plane"></i> Fetch Data from Elsevier
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Quick Stats -->
+                    <div class="card stats-card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-heartbeat"></i> System Overview & Diagnostics</h3>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <span class="stat-label">Elsevier Gateway API Key</span>
+                                <span class="stat-val text-success">Active <i class="fa-solid fa-circle-check"></i></span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">CORS Enabled</span>
+                                <span class="stat-val text-info">Yes</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">Local Endpoints</span>
+                                <span class="stat-val">5 Mapped</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">Latency Status</span>
+                                <span class="stat-val" id="latency-val">Ready</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div class="card results-card" id="results-panel">
+                        <div class="card-header flex-header">
+                            <h3><i class="fa-solid fa-list-ol"></i> Query Results</h3>
+                            <span class="badge" id="results-count">No query executed</span>
+                        </div>
+                        
+                        <div class="loading-spinner hidden" id="results-spinner">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i>
+                            <p>Querying Elsevier API servers...</p>
+                        </div>
+
+                        <div class="empty-state" id="results-empty">
+                            <i class="fa-solid fa-magnifying-glass-chart"></i>
+                            <p>Enter a query above and hit "Fetch Data" to view Scopus articles and visual analytics.</p>
+                        </div>
+
+                        <!-- Results List -->
+                        <div class="results-list hidden" id="results-list"></div>
+                    </div>
+
+                    <!-- Visual Analytics Charts -->
+                    <div class="card charts-card hidden" id="analytics-panel">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-chart-pie"></i> Visual Data Analytics</h3>
+                            <p>Real-time metric visualization derived from the Elsevier search query response.</p>
+                        </div>
+                        <div class="charts-grid">
+                            <div class="chart-container">
+                                <h4>Publications by Year</h4>
+                                <canvas id="chart-timeline"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <h4>Citation Distribution</h4>
+                                <canvas id="chart-citations"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Swagger Gateway OpenAPI Tester -->
+            <section id="tab-swagger-tester" class="tab-content">
+                <div class="swagger-tester-container">
+                    <div class="card swagger-intro-card">
+                        <h3><i class="fa-solid fa-cube"></i> Local ASP.NET Core Gateway Spec</h3>
+                        <p>This panel parses the local .NET 9 OpenAPI document (<strong>/openapi/v1.json</strong>) in real-time, displaying mapped routes and parameters. Fill in the fields below to run operations.</p>
+                    </div>
+
+                    <div class="swagger-layout">
+                        <!-- Sidebar list of endpoints -->
+                        <div class="card swagger-sidebar">
+                            <h4>Mapped Gateway APIs</h4>
+                            <div class="endpoint-list" id="gateway-endpoints">
+                                <div class="loading-spinner-small">
+                                    <i class="fa-solid fa-circle-notch fa-spin"></i> Loading OpenAPI endpoints...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Main workspace of testing -->
+                        <div class="card swagger-workspace">
+                            <div id="swagger-empty-workspace" class="empty-workspace">
+                                <i class="fa-solid fa-arrows-to-dot"></i>
+                                <p>Select an endpoint from the left sidebar to generate its interactive testing dashboard.</p>
+                            </div>
+
+                            <!-- Testing Dashboard Form (populated dynamically) -->
+                            <div id="swagger-active-workspace" class="active-workspace hidden">
+                                <div class="workspace-header">
+                                    <span class="method-badge get" id="active-method">GET</span>
+                                    <h3 id="active-path">/api/scopus/search</h3>
+                                    <span class="endpoint-name-tag" id="active-name">SearchScopus</span>
+                                </div>
+                                <p class="endpoint-desc" id="active-description">Endpoint description goes here.</p>
+
+                                <div class="workspace-body">
+                                    <form id="endpoint-test-form" onsubmit="event.preventDefault(); executeEndpoint();">
+                                        <div class="params-section">
+                                            <h4>Parameters</h4>
+                                            <div class="params-table" id="endpoint-params-list">
+                                                <!-- Dynamic list of inputs -->
+                                            </div>
+                                        </div>
+
+                                        <div class="body-section hidden" id="endpoint-body-group">
+                                            <h4>Request Body (JSON)</h4>
+                                            <textarea id="endpoint-body-content" rows="6" class="code-textarea" placeholder="{}"></textarea>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-accent btn-execute" id="btn-run-endpoint">
+                                            <i class="fa-solid fa-play"></i> Send HTTP Request
+                                        </button>
+                                    </form>
+
+                                    <!-- Response Console -->
+                                    <div class="response-panel">
+                                        <div class="response-header">
+                                            <h4>Response Viewer</h4>
+                                            <div class="response-meta hidden" id="response-meta">
+                                                <span class="badge status-200" id="response-status">200 OK</span>
+                                                <span class="duration-badge"><i class="fa-regular fa-clock"></i> <span id="response-time">120ms</span></span>
+                                                <button class="btn btn-small" onclick="copyResponseText()"><i class="fa-regular fa-copy"></i> Copy JSON</button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="console-body" id="response-console">
+                                            <pre><code class="language-json" id="response-code-output">// Responses will appear here after request execution.</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- External OpenAPI / Swagger Tester -->
+            <section id="tab-external-tester" class="tab-content">
+                <div class="external-tester-grid">
+                    <div class="card ext-config-card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-cloud-arrow-down"></i> Test Any External Swagger/OpenAPI Spec</h3>
+                            <p>Input a Swagger OpenAPI JSON URL or paste raw JSON below. This portal will render a premium test client for any endpoint instantly.</p>
+                        </div>
+                        <div class="ext-inputs">
+                            <div class="search-input-wrapper">
+                                <i class="fa-solid fa-link input-icon"></i>
+                                <input type="url" id="ext-openapi-url" placeholder="Enter OpenAPI JSON URL (e.g. http://localhost:5000/openapi/v1.json)" value="">
+                            </div>
+                            <div class="ext-btn-row">
+                                <button class="btn btn-primary" onclick="loadExternalOpenAPI()">
+                                    <i class="fa-solid fa-arrows-rotate"></i> Parse URL
+                                </button>
+                                <button class="btn btn-secondary" onclick="toggleRawInput()">
+                                    <i class="fa-solid fa-code"></i> Paste Raw JSON
+                                </button>
+                            </div>
+
+                            <div class="search-form-group hidden" id="raw-json-group" style="margin-top: 15px;">
+                                <label for="ext-raw-json">Paste Swagger OpenAPI JSON Content</label>
+                                <textarea id="ext-raw-json" rows="6" class="code-textarea" placeholder="Paste your v2 or v3 OpenAPI JSON here..."></textarea>
+                                <button class="btn btn-accent" onclick="parseRawExternalOpenAPI()" style="margin-top: 10px;">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Render Client
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="swagger-layout ext-layout hidden" id="ext-swagger-layout">
+                        <!-- Sidebar list of endpoints -->
+                        <div class="card swagger-sidebar">
+                            <h4 id="ext-swagger-title">External APIs</h4>
+                            <div class="endpoint-list" id="ext-endpoints"></div>
+                        </div>
+
+                        <!-- Main workspace of testing -->
+                        <div class="card swagger-workspace">
+                            <div id="ext-swagger-empty-workspace" class="empty-workspace">
+                                <i class="fa-solid fa-arrows-to-dot"></i>
+                                <p>Select an external endpoint from the sidebar to generate its interactive testing interface.</p>
+                            </div>
+
+                            <!-- Testing Dashboard Form (populated dynamically) -->
+                            <div id="ext-swagger-active-workspace" class="active-workspace hidden">
+                                <div class="workspace-header">
+                                    <span class="method-badge get" id="ext-active-method">GET</span>
+                                    <h3 id="ext-active-path">/api/v1/resource</h3>
+                                    <span class="endpoint-name-tag" id="ext-active-name">GetResource</span>
+                                </div>
+                                <p class="endpoint-desc" id="ext-active-description">Endpoint description goes here.</p>
+
+                                <div class="workspace-body">
+                                    <form id="ext-endpoint-test-form" onsubmit="event.preventDefault(); executeExternalEndpoint();">
+                                        <div class="params-section">
+                                            <h4>Parameters</h4>
+                                            <div class="params-table" id="ext-endpoint-params-list"></div>
+                                        </div>
+
+                                        <div class="body-section hidden" id="ext-endpoint-body-group">
+                                            <h4>Request Body (JSON)</h4>
+                                            <textarea id="ext-endpoint-body-content" rows="6" class="code-textarea" placeholder="{}"></textarea>
+                                        </div>
+
+                                        <div class="auth-section">
+                                            <h4>Base Override (Optional)</h4>
+                                            <div class="search-input-wrapper">
+                                                <i class="fa-solid fa-globe input-icon"></i>
+                                                <input type="text" id="ext-base-override" placeholder="Base URL (e.g. http://localhost:5000)">
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-accent btn-execute" id="btn-run-ext-endpoint">
+                                            <i class="fa-solid fa-play"></i> Send HTTP Request
+                                        </button>
+                                    </form>
+
+                                    <!-- Response Console -->
+                                    <div class="response-panel">
+                                        <div class="response-header">
+                                            <h4>Response Viewer</h4>
+                                            <div class="response-meta hidden" id="ext-response-meta">
+                                                <span class="badge status-200" id="ext-response-status">200 OK</span>
+                                                <span class="duration-badge"><i class="fa-regular fa-clock"></i> <span id="ext-response-time">120ms</span></span>
+                                                <button class="btn btn-small" onclick="copyExtResponseText()"><i class="fa-regular fa-copy"></i> Copy JSON</button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="console-body" id="ext-response-console">
+                                            <pre><code class="language-json" id="ext-response-code-output">// Responses will appear here after request execution.</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scopus Query Language Guide -->
+            <section id="tab-query-guide" class="tab-content">
+                <div class="guide-grid">
+                    <div class="card guide-intro">
+                        <h3><i class="fa-solid fa-graduation-cap"></i> Mastering Scopus Search Query Language</h3>
+                        <p>Elsevier Scopus uses a rich boolean Search query syntax. By using specific field codes, you can filter documents with extreme precision. Here is a curated reference sheet of standard field codes and boolean combinations.</p>
+                    </div>
+
+                    <div class="card guide-codes">
+                        <h4>Essential Scopus Field Codes</h4>
+                        <div class="table-container">
+                            <table class="guide-table">
+                                <thead>
+                                    <tr>
+                                        <th>Field Code</th>
+                                        <th>Purpose</th>
+                                        <th>Example Search Query</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>TITLE-ABS-KEY(...)</code></td>
+                                        <td>Search within Document Title, Abstract, or Keywords (Most Common).</td>
+                                        <td><code>TITLE-ABS-KEY("deep learning")</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>AUTHOR-NAME(...)</code></td>
+                                        <td>Search for works by author last name and first initials.</td>
+                                        <td><code>AUTHOR-NAME(hawking, s)</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>AFFIL(...)</code></td>
+                                        <td>Search for works affiliated with a specific university or institute.</td>
+                                        <td><code>AFFIL(University of Oxford)</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>KEY(...)</code></td>
+                                        <td>Match specific indexing keywords defined by researchers.</td>
+                                        <td><code>KEY("graphene oxide")</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>PUBYEAR IS ...</code></td>
+                                        <td>Restrict papers to a specific year. (Or use operators like <code>&gt;</code>, <code>&lt;</code>).</td>
+                                        <td><code>TITLE-ABS-KEY(quantum) AND PUBYEAR IS 2023</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>DOI(...)</code></td>
+                                        <td>Search specifically for an article by its digital object identifier.</td>
+                                        <td><code>DOI("10.1038/nature14539")</code></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card guide-boolean">
+                        <h4>Boolean Operators & Examples</h4>
+                        <div class="boolean-cards">
+                            <div class="boolean-box">
+                                <h5>AND (Intersection)</h5>
+                                <p>Filters articles containing both search terms.</p>
+                                <code>TITLE-ABS-KEY("cancer") AND TITLE-ABS-KEY("immunotherapy")</code>
+                            </div>
+                            <div class="boolean-box">
+                                <h5>OR (Union)</h5>
+                                <p>Filters articles containing at least one of the terms.</p>
+                                <code>KEY("deep learning") OR KEY("neural networks")</code>
+                            </div>
+                            <div class="boolean-box">
+                                <h5>AND NOT (Exclusion)</h5>
+                                <p>Excludes articles containing the second term.</p>
+                                <code>TITLE-ABS-KEY("renewable energy") AND NOT KEY("solar")</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Right Slide Sheet for Document details -->
+    <div class="slide-sheet" id="detail-sheet">
+        <div class="sheet-header">
+            <button class="btn-close" onclick="closeDetailSheet()"><i class="fa-solid fa-xmark"></i></button>
+            <span class="sheet-category" id="sheet-journal">JOURNAL REFERENCE</span>
+            <h2 id="sheet-title">Document Title Here</h2>
+            <p class="sheet-author" id="sheet-authors">By Author et al.</p>
+        </div>
+        <div class="sheet-body">
+            <div class="sheet-metric-row">
+                <div class="sheet-metric">
+                    <span class="metric-val" id="sheet-citations">0</span>
+                    <span class="metric-lbl">Scopus Citations</span>
+                </div>
+                <div class="sheet-metric">
+                    <span class="metric-val" id="sheet-citescore">--</span>
+                    <span class="metric-lbl">CiteScore</span>
+                </div>
+                <div class="sheet-metric">
+                    <span class="metric-val" id="sheet-date">2026-05</span>
+                    <span class="metric-lbl">Publication Date</span>
+                </div>
+            </div>
+
+            <div class="sheet-section">
+                <h4><i class="fa-solid fa-quote-left"></i> Abstract / Summary</h4>
+                <div class="abstract-content" id="sheet-abstract">
+                    Abstract text will load here. Note that full abstract retrieval queries the separate Scopus Abstract Retrieval API endpoint behind the scenes using our C# gateway.
+                </div>
+                <div class="loading-spinner-small hidden" id="sheet-abstract-spinner">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i> Fetching abstract...
+                </div>
+            </div>
+
+            <div class="sheet-section">
+                <h4><i class="fa-solid fa-circle-info"></i> Metadata Information</h4>
+                <ul class="meta-list">
+                    <li><strong>DOI:</strong> <span id="sheet-doi">N/A</span></li>
+                    <li><strong>Scopus ID:</strong> <span id="sheet-scopus-id">N/A</span></li>
+                    <li><strong>Journal CiteScore:</strong> <span id="sheet-citescore-full">N/A</span></li>
+                    <li><strong>SCImago Journal Rank (SJR):</strong> <span id="sheet-sjr">N/A</span></li>
+                    <li><strong>Affiliation:</strong> <span id="sheet-affiliation">N/A</span></li>
+                    <li><strong>Subject Areas:</strong> <span id="sheet-subjects">N/A</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Logic -->
+    <script src="js/app.js"></script>
+</body>
+</html>

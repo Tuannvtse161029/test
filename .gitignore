@@ -1,0 +1,12 @@
+# .gitignore for .NET Core project
+[Dd]ebug/
+[Rr]elease/
+bin/
+obj/
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates

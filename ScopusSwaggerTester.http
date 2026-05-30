@@ -1,0 +1,6 @@
+@ScopusSwaggerTester_HostAddress = http://localhost:5123
+
+GET {{ScopusSwaggerTester_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

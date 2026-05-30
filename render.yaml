@@ -1,0 +1,11 @@
+# Render Blueprint Specification
+services:
+  - type: web
+    name: scopus-swagger-tester
+    env: docker
+    plan: free
+    region: singapore
+    branch: main
+    envVars:
+      - key: PORT
+        value: 10000

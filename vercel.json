@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/api/scopus/search", "destination": "/api/search.js" },
+    { "source": "/api/scopus/author-search", "destination": "/api/author-search.js" },
+    { "source": "/api/scopus/author/:authorId", "destination": "/api/author.js?authorId=:authorId" },
+    { "source": "/api/scopus/abstract/:scopusId", "destination": "/api/abstract.js?scopusId=:scopusId" },
+    { "source": "/api/scopus/abstract-by-doi", "destination": "/api/abstract-by-doi.js" },
+    { "source": "/api/scopus/serial-title", "destination": "/api/serial-title.js" },
+    { "source": "/(.*)", "destination": "/wwwroot/$1" }
+  ]
+}
