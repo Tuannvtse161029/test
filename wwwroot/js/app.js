@@ -896,6 +896,11 @@ async function fetchJournalMetrics(journal, issn) {
             } else if (entry.citeScoreYearInfoList?.citeScoreTrackerMetric) {
                 citeScoreVal = entry.citeScoreYearInfoList.citeScoreTrackerMetric || '--';
             }
+
+            // Force fallback if the API retrieved CiteScore is blank/invalid
+            if (citeScoreVal === '--') {
+                throw new Error("No CiteScore available in Scopus registry for this journal");
+            }
             
             document.getElementById('sheet-citescore').textContent = citeScoreVal;
             document.getElementById('sheet-citescore-full').textContent = `${citeScoreVal}${citeScoreYear}`;
